@@ -1,7 +1,6 @@
-from django.conf import settings
 from geo import get_geo_info
-from geo import get_ip_address
-import defaults
+from django.utils.functional import SimpleLazyObject
+
 
 class GeoAwareSessionMiddleware(object):
     """ Saves geo info in session if GeoIP is configured for city or country.
@@ -23,15 +22,9 @@ class GeoAwareSessionMiddleware(object):
     }
     """
 
-    def process_request(self, request):
+    @staticmethod
+    def process_request(request):
         """ Save or update geo info in session """
-        fqdn_or_ip = getattr(defaults, 'GEOIP_DEBUG_DOMAIN_OR_IP', get_ip_address(request))
-        try:
-            if request.session['geo_info']['fqdn_or_ip'] == fqdn_or_ip:
-                return None
-        except:
-            pass
-        geo_info = get_geo_info(request)
-        request.session['geo_info'] = geo_info
-        request.session.modified = True
+
+        request.location = SimpleLazyObject(lambda: get_geo_info(request))
         return None

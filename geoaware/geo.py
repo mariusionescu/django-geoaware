@@ -1,5 +1,4 @@
 import re
-from django.conf import settings
 
 try:
     from django.contrib.gis.geoip import GeoIP
@@ -9,6 +8,7 @@ import defaults
 
 # by no means this is a perfect IP regex
 IP_RE = re.compile('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}')
+
 
 def get_ip_address(request):
     """ Make best attempt to get client's real IP or return the loopback IP """
@@ -57,6 +57,4 @@ def get_geo_info(request):
         geo_info['fqdn_or_ip'] = fqdn_or_ip
 
     return geo_info
-
-
 
